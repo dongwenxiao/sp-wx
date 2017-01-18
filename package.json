@@ -1,0 +1,30 @@
+{
+  "name": "sp-wx",
+  "version": "1.0.0",
+  "description": "Wechat api wrapper fun for sp-base.",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dongwenxiao/sp-wx.git"
+  },
+  "keywords": [
+    "sp-base",
+    "wechat",
+    "wx"
+  ],
+  "author": "cs_victor@126.com",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/dongwenxiao/sp-wx/issues"
+  },
+  "homepage": "https://github.com/dongwenxiao/sp-wx#readme",
+  "dependencies": {
+    "wechat-oauth": "^1.2.1"
+  }
+}
