@@ -1,11 +1,8 @@
 {
   "name": "sp-wx",
-  "version": "1.0.0",
-  "description": "Wechat api wrapper fun for sp-base.",
+  "version": "2.0.0",
+  "description": "Wechat api wrapper functions for super-project.",
   "main": "index.js",
-  "directories": {
-    "example": "example"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,7 +11,7 @@
     "url": "git+https://github.com/dongwenxiao/sp-wx.git"
   },
   "keywords": [
-    "sp-base",
+    "super-project",
     "wechat",
     "wx"
   ],
@@ -25,6 +22,8 @@
   },
   "homepage": "https://github.com/dongwenxiao/sp-wx#readme",
   "dependencies": {
-    "wechat-oauth": "^1.2.1"
+    "isomorphic-fetch": "^2.2.1",
+    "debug": "^3.1.0",
+    "sp-functions": "^2.1.0"
   }
 }
