@@ -1,13 +1,10 @@
-const fs = require('fs')
-
 const sha1 = require('sp-functions/crypto/sha1')
-const md5 = require('sp-functions/crypto/md5')
 const randomString = require('sp-functions/random/string')
-const moment = require('moment')
 
 const {
     WX_OAUTH_SCOPE,
     GET_OAuth_URL,
+    GET_OAuth_QRCODE_URL,
     GET_OAuth_ACCESS_TOKEN_URL,
     GET_ACCESS_TOKEN_URL,
     GET_USER_INFO_URL,
@@ -33,12 +30,26 @@ export default class Wechat {
      * 获取授权页面的URL地址
      * @param {String} redirect 授权后要跳转的地址
      * @param {String} state 开发者可提供的数据
-     * @param {String} scope 作用范围，值为snsapi_userinfo和snsapi_base，前者用于弹出，后者用于跳转
+     * @param {String} scope 作用范围，值为snsapi_userinfo和snsapi_base
      */
     getAuthorizeURL(redirect, state = '', scope = WX_OAUTH_SCOPE.SNSAPI_USERINFO) {
 
         let url = `${GET_OAuth_URL}?appid=${this.appId}&redirect_uri=${redirect}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`
         debug('getAuthorizeURL() url: %o', url)
+
+        return url
+    }
+
+    /**
+     * 获取PC授权页面（二维码）的URL地址
+     * @param {String} redirect 授权后要跳转的地址
+     * @param {String} state 开发者可提供的数据
+     * @param {String} scope 作用范围，值为snsapi_login
+     */
+    getAuthorizeQRCodeURL(redirect, state = '', scope = WX_OAUTH_SCOPE.SNSAPI_LOGIN){
+
+        let url = `${GET_OAuth_QRCODE_URL}?appid=${this.appId}&redirect_uri=${redirect}&response_type=code&scope=${scope}&state=${state}#wechat_redirect`
+        debug('getAuthorizeQRCodeURL() url: %o', url)
 
         return url
     }
@@ -94,11 +105,11 @@ export default class Wechat {
     /**
      * 获取用户信息
      * @param {*} accessToken 
-     * @param {*} openid 
+     * @param {*} openId 
      */
-    async getUserInfo(accessToken, openid) {
+    async getUserInfo(accessToken, openId) {
 
-        let url = `${GET_USER_INFO_URL}?access_token=${accessToken}&openid=${openid}`
+        let url = `${GET_USER_INFO_URL}?access_token=${accessToken}&openid=${openId}`
         debug('getUserInfo() url: %o', url)
 
         return await fetch(url)
@@ -176,7 +187,12 @@ export default class Wechat {
     }
 
 
-    async fetchAudio(mediaId, savePath, filename) {
+    /**
+     * 获取微信服务器上暂存的媒体文件，如：音频
+     * @param {String} mediaId 微信上传后返回的媒体id
+     * @returns {Buffer} 媒体文件的文件流
+     */
+    async fetchAudio(mediaId) {
 
         let access_token = await this.getAccessToken()
         let url = `${GET_MEDIA_FILE_URL}?access_token=${access_token.access_token}&media_id=${mediaId}`
@@ -187,21 +203,24 @@ export default class Wechat {
                 return res.buffer()
             })
             .then((buffer) => {
-                let writeFile = new Promise((reslove) => {
-                    // 默认md5名字
-                    if (!filename) {
-                        filename = (() => {
-                            let now = moment().format('YYYYMMDDHHss.S')
-                            let random = randomString(5)
-                            return md5(now + random) + '.amr'
-                        })()
-                    }
-                    // 保存文件到本地
-                    fs.writeFile(`${savePath}/${filename}`, buffer, () => {
-                        reslove(filename)
-                    })
-                })
-                return writeFile
+                return buffer
+
+                // // 把文件流保存到本地的实例代码
+                // let writeFile = new Promise((reslove) => {
+                //     // 默认md5名字
+                //     if (!filename) {
+                //         filename = (() => {
+                //             let now = moment().format('YYYYMMDDHHss.S')
+                //             let random = randomString(5)
+                //             return md5(now + random) + '.amr'
+                //         })()
+                //     }
+                //     // 保存文件到本地
+                //     fs.writeFile(`${savePath}/${filename}`, buffer, () => {
+                //         reslove(filename)
+                //     })
+                // })
+                // return writeFile
             })
             .catch((err) => {
                 error(err)
